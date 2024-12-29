@@ -72,7 +72,6 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = "addIncome") {
                             AddIncomeScreen(
-                                modifier = Modifier.padding(innerPadding),
                                 navController = navController
                             )
                         }

@@ -40,9 +40,13 @@ import com.example.expansetracker.data.model.TransactionItem
 import com.example.expansetracker.screens.addexpanse.AddExpanseViewmodel
 import com.example.expansetracker.screens.income.AddIncomeViewmodel
 import com.example.expansetracker.util.DeleteAlertDialog
+import com.example.expansetracker.util.dateFormatter
 import com.example.expansetracker.util.toLocalDate
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun HomeScreen(
@@ -108,7 +112,7 @@ fun HomeScreen(
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                CardItem(text = "Amount", amount = totalAmount - totalExpanse)
+                CardItem(text = "Amount", amount = totalAmount+totalIncome - totalExpanse)
 
                 MinimalDropdownMenu(onClickItem1 = {
                     showBottomSheet = true
@@ -123,6 +127,7 @@ fun HomeScreen(
                 DeleteAlertDialog(onDismiss = { showDeleteDialog = false }, onConfirm = {
                     dataStoreViewmodel.updateTotalBudget(0)
                     expanseViewmodel.deleteAll()
+                    incomeViewmodel.deleteAll()
                     Toast.makeText(context, "Cleared", Toast.LENGTH_SHORT).show()
                     showDeleteDialog = false
                 }, title = "Clear Dashboard", content = "You are about to clear everything")
@@ -158,26 +163,21 @@ fun HomeScreen(
             }
 
         }
-        // Extension function to convert string date to LocalDate
-        fun String.toLocalDate(): LocalDate? {
-            val formatter = DateTimeFormatter.ofPattern("dd/MMM/yyyy") // Ensure this pattern matches your date format
-            return try {
-                LocalDate.parse(this, formatter) // Convert the date to LocalDate
-            } catch (e: Exception) {
-                println("Invalid date format: $this")  // Log invalid dates
-                null // If the date is invalid, return null
-            }
-        }
+
+
+
+
 
         val combinedTransactions = (recentTransaction.map { Transaction.Expanse(it) } +
                 incomeTransactions.map { Transaction.Income(it) })
             .sortedByDescending { transaction ->
-                // Safely get the date as LocalDate and handle invalid cases
+                // Safely get the date as Date and handle invalid cases
                 when (transaction) {
-                    is Transaction.Expanse -> transaction.transactionItem.date.toLocalDate() ?: LocalDate.MIN
-                    is Transaction.Income -> transaction.incomeItem.date.toLocalDate() ?: LocalDate.MIN
+                    is Transaction.Expanse -> transaction.transactionItem.date.dateFormatter()
+                    is Transaction.Income -> transaction.incomeItem.date.dateFormatter()
                 }
             }
+
 
 
 

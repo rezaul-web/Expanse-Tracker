@@ -16,17 +16,11 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.expansetracker.screens.addexpanse.AddExpanseViewmodel
 import com.example.expansetracker.screens.addexpanse.DatePickerModalInput
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -49,8 +42,7 @@ import java.util.Locale
 
 @Composable
 fun AddIncomeScreen(
-    modifier: Modifier = Modifier,
-    expanseViewmodel: AddIncomeViewmodel = hiltViewModel(),
+    addIncomeViewmodel: AddIncomeViewmodel = hiltViewModel(),
     navController: NavHostController
 ) {
     var name by remember { mutableStateOf("") }
@@ -74,7 +66,7 @@ fun AddIncomeScreen(
             IconButton(onClick = {
                 navController.navigate("home") {
                     popUpTo("home") {
-                        inclusive=true
+                        inclusive = true
                     }
                 }
             }) {
@@ -152,16 +144,21 @@ fun AddIncomeScreen(
                     onDismiss = { showDatePicker = false }
                 )
             }
-            val context=LocalContext.current
+            val context = LocalContext.current
             Button(
                 onClick = {
-                    if (name.isNotEmpty()&&amount.isNotEmpty()&&date.isNotEmpty()) {
-                        expanseViewmodel.getIncome(name, amount.toInt(), date)
+                    if (name.isNotEmpty() && amount.isNotEmpty() && date.isNotEmpty()) {
+                        addIncomeViewmodel.getIncome(name, amount.toInt(), date)
+                        name = ""
+                        amount = ""
+                        date = ""
                     }
                     Toast.makeText(context, "Added", Toast.LENGTH_SHORT).show()
-                }, modifier = Modifier
+                },
+                modifier = Modifier
                     .padding(8.dp)
-                    .fillMaxWidth(), enabled = (name.isNotEmpty() && amount.isNotEmpty() && date.isNotEmpty())
+                    .fillMaxWidth(),
+                enabled = (name.isNotEmpty() && amount.isNotEmpty() && date.isNotEmpty())
             ) {
                 Text(text = "Add")
             }

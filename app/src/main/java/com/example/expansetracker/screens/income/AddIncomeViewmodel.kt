@@ -61,7 +61,9 @@ private fun getAll(){
     fun deleteAll() {
         viewModelScope.launch {
             dao.deleteAll()
-            _totalIncome.value=dao.getTotal()
+           getTotalExpanse()
+           getAll()
+
         }
     }
 

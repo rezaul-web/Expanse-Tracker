@@ -156,6 +156,9 @@ fun AddExpanseScreen(
                 onClick = {
                     if (name.isNotEmpty()&&amount.isNotEmpty()&&date.isNotEmpty()) {
                         expanseViewmodel.getTransactionItem(name, amount.toInt(), date)
+                        name = ""
+                        amount = ""
+                        date = ""
                     }
                     Toast.makeText(context, "Added", Toast.LENGTH_SHORT).show()
                 }, modifier = Modifier

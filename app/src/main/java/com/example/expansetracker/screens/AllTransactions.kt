@@ -27,6 +27,7 @@ import com.example.expansetracker.screens.addexpanse.AddExpanseViewmodel
 import com.example.expansetracker.screens.home.ItemLayout
 import com.example.expansetracker.screens.home.Transaction
 import com.example.expansetracker.screens.income.AddIncomeViewmodel
+import com.example.expansetracker.util.dateFormatter
 import com.example.expansetracker.util.toLocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,8 +66,8 @@ fun AllTransactions(
         val combinedTransactions = (allTransaction.map { Transaction.Expanse(it) } +
                 incomeTransactions.map { Transaction.Income(it) }).sortedByDescending {
             when (it) {
-                is Transaction.Expanse -> it.transactionItem.date.toLocalDate()
-                is Transaction.Income -> it.incomeItem.date.toLocalDate()
+                is Transaction.Expanse -> it.transactionItem.date.dateFormatter()
+                is Transaction.Income -> it.incomeItem.date.dateFormatter()
             }
 
         }

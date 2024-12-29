@@ -23,11 +23,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.expansetracker.screens.income.AddIncomeScreen
 import com.example.expansetracker.screens.AllTransactions
 import com.example.expansetracker.screens.addexpanse.AddExpanseScreen
 import com.example.expansetracker.screens.home.HomeScreen
@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
                             navController.navigate("addExpanse")
                         }) {
                             MinimalDropFloating(onClickItem1 = {
-                                navController.navigate("addExpanse")
+                                navController.navigate("addIncome")
                             }, onClickItem2 = {
                                 navController.navigate("addExpanse")
                             })
@@ -66,6 +66,12 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = "addExpanse") {
                             AddExpanseScreen(
+                                modifier = Modifier.padding(innerPadding),
+                                navController = navController
+                            )
+                        }
+                        composable(route = "addIncome") {
+                            AddIncomeScreen(
                                 modifier = Modifier.padding(innerPadding),
                                 navController = navController
                             )

@@ -35,18 +35,27 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.expansetracker.budget.BudgetViewModel
+import com.example.expansetracker.data.model.IncomeItem
+import com.example.expansetracker.data.model.TransactionItem
 import com.example.expansetracker.screens.addexpanse.AddExpanseViewmodel
+import com.example.expansetracker.screens.income.AddIncomeViewmodel
 import com.example.expansetracker.util.DeleteAlertDialog
+import com.example.expansetracker.util.toLocalDate
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     expanseViewmodel: AddExpanseViewmodel = hiltViewModel(),
+    incomeViewmodel: AddIncomeViewmodel = hiltViewModel(),
     navController: NavController,
     dataStoreViewmodel: BudgetViewModel = hiltViewModel()
 ) {
     val recentTransaction by expanseViewmodel.recentTransactions.collectAsState()
+    val incomeTransactions by incomeViewmodel.allIncomes.collectAsState()
     val totalExpanse by expanseViewmodel.totalExpanse.collectAsState()
+    val totalIncome by incomeViewmodel.totalIncome.collectAsState()
     val context = LocalContext.current
     val totalAmount by dataStoreViewmodel.totalBudget.collectAsState()
 
@@ -126,7 +135,7 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
 
             ) {
-                CardItem(text = "Income", amount = 0)
+                CardItem(text = "Income", amount = totalIncome)
                 CardItem(text = "Expanse", amount = totalExpanse)
             }
         }
@@ -149,18 +158,67 @@ fun HomeScreen(
             }
 
         }
+        // Extension function to convert string date to LocalDate
+        fun String.toLocalDate(): LocalDate? {
+            val formatter = DateTimeFormatter.ofPattern("dd/MMM/yyyy") // Ensure this pattern matches your date format
+            return try {
+                LocalDate.parse(this, formatter) // Convert the date to LocalDate
+            } catch (e: Exception) {
+                println("Invalid date format: $this")  // Log invalid dates
+                null // If the date is invalid, return null
+            }
+        }
+
+        val combinedTransactions = (recentTransaction.map { Transaction.Expanse(it) } +
+                incomeTransactions.map { Transaction.Income(it) })
+            .sortedByDescending { transaction ->
+                // Safely get the date as LocalDate and handle invalid cases
+                when (transaction) {
+                    is Transaction.Expanse -> transaction.transactionItem.date.toLocalDate() ?: LocalDate.MIN
+                    is Transaction.Income -> transaction.incomeItem.date.toLocalDate() ?: LocalDate.MIN
+                }
+            }
+
 
 
         LazyColumn(
             modifier = Modifier.padding(8.dp)
         ) {
-            items(recentTransaction) {
-                ItemLayout(text = it.text, amount = it.amount, date = it.date)
+            items(combinedTransactions) { transactions ->
+                when (transactions) {
+                    is Transaction.Expanse -> {
+                        ItemLayout(
+                            text = transactions.transactionItem.text,
+                             amount = "- ${transactions.transactionItem.amount}",
+                            date = transactions.transactionItem.date
+                        )
+                    }
+
+                    is Transaction.Income -> {
+                        val t=TransactionItem(
+                            text = transactions.incomeItem.text,
+                            amount = transactions.incomeItem.amount,
+                            date = transactions.incomeItem.date
+                        )
+                        ItemLayout(
+                            text = " ${t.text}",
+                            amount = "+ ${t.amount}",
+                            date =t.date
+                        )
+                    }
+                }
             }
+
+
         }
 
-
     }
-
 }
+
+sealed class Transaction {
+    data class Expanse(val transactionItem: TransactionItem) : Transaction()
+    data class Income(val incomeItem: IncomeItem) : Transaction()
+}
+
+
 

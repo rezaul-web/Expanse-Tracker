@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ItemLayout(modifier: Modifier = Modifier, text: String, amount: Int, date: String) {
+fun ItemLayout(modifier: Modifier = Modifier, text: String, amount: String, date: String) {
     val t = "\u20B9 $amount"
     Row(
         modifier = modifier

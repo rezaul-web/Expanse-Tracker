@@ -22,16 +22,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.expansetracker.data.model.TransactionItem
 import com.example.expansetracker.screens.addexpanse.AddExpanseViewmodel
 import com.example.expansetracker.screens.home.ItemLayout
+import com.example.expansetracker.screens.home.Transaction
+import com.example.expansetracker.screens.income.AddIncomeViewmodel
+import com.example.expansetracker.util.toLocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllTransactions(
     modifier: Modifier = Modifier,
     expanseViewmodel: AddExpanseViewmodel = hiltViewModel(),
+    incomeViewmodel: AddIncomeViewmodel = hiltViewModel(),
     navController: NavController
 ) {
+    val allTransaction by expanseViewmodel.allTransactions.collectAsState()
+    val incomeTransactions by incomeViewmodel.allIncomes.collectAsState()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -54,19 +61,47 @@ fun AllTransactions(
             )
 
         }
-    ) {
+    ) { transaction ->
+        val combinedTransactions = (allTransaction.map { Transaction.Expanse(it) } +
+                incomeTransactions.map { Transaction.Income(it) }).sortedByDescending {
+            when (it) {
+                is Transaction.Expanse -> it.transactionItem.date.toLocalDate()
+                is Transaction.Income -> it.incomeItem.date.toLocalDate()
+            }
 
+        }
 
-        Column(Modifier.padding(it)) {
+        LazyColumn(
+            modifier = Modifier.padding(transaction)
+        ) {
+            items(combinedTransactions) { transactions ->
+                when (transactions) {
+                    is Transaction.Expanse -> {
+                        ItemLayout(
+                            text = transactions.transactionItem.text,
+                            amount = "- ${transactions.transactionItem.amount}",
+                            date = transactions.transactionItem.date
+                        )
+                    }
 
-            val allTransactions by expanseViewmodel.allTransactions.collectAsState()
-            LazyColumn(
-                modifier = Modifier.padding(8.dp)
-            ) {
-                items(allTransactions) {
-                    ItemLayout(text = it.text, amount = it.amount, date = it.date)
+                    is Transaction.Income -> {
+                        val t= TransactionItem(
+                            text = transactions.incomeItem.text,
+                            amount = transactions.incomeItem.amount,
+                            date = transactions.incomeItem.date
+                        )
+                        ItemLayout(
+                            text = " ${t.text}",
+                            amount = "+ ${t.amount}",
+                            date =t.date
+                        )
+                    }
                 }
             }
+
+
         }
+
     }
-}
+
+    }

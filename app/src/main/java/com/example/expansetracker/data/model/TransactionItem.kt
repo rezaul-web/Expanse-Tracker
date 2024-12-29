@@ -11,3 +11,11 @@ data class TransactionItem(
     val amount:Int,
     val date:String
 )
+@Entity(tableName = "Income")
+data class IncomeItem(
+    @PrimaryKey(autoGenerate = true)
+    var id:Int=0,
+    val text:String,
+    val amount:Int,
+    val date:String
+)

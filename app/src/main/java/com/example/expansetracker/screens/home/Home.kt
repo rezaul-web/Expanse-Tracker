@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,18 +15,26 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -41,13 +50,8 @@ import com.example.expansetracker.screens.addexpanse.AddExpanseViewmodel
 import com.example.expansetracker.screens.income.AddIncomeViewmodel
 import com.example.expansetracker.util.DeleteAlertDialog
 import com.example.expansetracker.util.dateFormatter
-import com.example.expansetracker.util.toLocalDate
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Date
-import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -65,6 +69,11 @@ fun HomeScreen(
 
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) }
+
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = false,
+    )
+    var amount by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -96,9 +105,25 @@ fun HomeScreen(
                 )
             }
 
-            IconButton(onClick = {}) {
-                Icon(Icons.Default.Notifications, contentDescription = null)
+            IconButton(onClick = {
+                // Handle click action here
+            }) {
+                BadgedBox(
+                    badge = {
+                        Badge(
+                            containerColor = Color.Red // Customize badge color
+                        ) {
+                            Text("3") // Optional: Add a number or leave empty for just a dot
+                        }
+                    }
+                ) {
+                    Icon(
+                        Icons.Default.Notifications,
+                        contentDescription = "Notifications"
+                    )
+                }
             }
+
 
         }
         ElevatedCard(
@@ -112,17 +137,54 @@ fun HomeScreen(
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                CardItem(text = "Amount", amount = totalAmount+totalIncome - totalExpanse)
+                CardItem(text = "Amount", amount = totalAmount + totalIncome - totalExpanse)
 
                 MinimalDropdownMenu(onClickItem1 = {
                     showBottomSheet = true
-                    dataStoreViewmodel.updateTotalBudget(totalAmount + 1000)
 
                 }, onClickItem2 = {
                     showDeleteDialog = true
-                }, item1 = "Add 1000", item2 = "Clear Dashboard")
+                }, item1 = "Add Amount", item2 = "Clear Dashboard")
 
             }
+            if (showBottomSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet = false
+                    },
+                    sheetState = sheetState,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .align(Alignment.CenterHorizontally),
+                ) {
+                    // Wrap the content in a Column for proper layout
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp), // Add padding for a better visual experience
+                        horizontalAlignment = Alignment.CenterHorizontally, // Center align the items horizontally
+                        verticalArrangement = Arrangement.spacedBy(12.dp) // Add spacing between items
+                    ) {
+                        OutlinedTextField(
+                            value = amount,
+                            onValueChange = { amount = it },
+                            label = { Text("Enter Amount to Add") },
+                            modifier = Modifier.fillMaxWidth() // Make the text field take full width
+                        )
+                        OutlinedButton(
+                            onClick = {
+                                val amountAdd = amount.toInt()
+                                dataStoreViewmodel.updateTotalBudget(totalAmount + amountAdd)
+                            },
+                            modifier = Modifier.fillMaxWidth() // Make the button take full width
+                        ) {
+                            Text(text = "Add Amount")
+
+                        }
+                    }
+                }
+            }
+
             if (showDeleteDialog) {
                 DeleteAlertDialog(onDismiss = { showDeleteDialog = false }, onConfirm = {
                     dataStoreViewmodel.updateTotalBudget(0)
@@ -165,9 +227,6 @@ fun HomeScreen(
         }
 
 
-
-
-
         val combinedTransactions = (recentTransaction.map { Transaction.Expanse(it) } +
                 incomeTransactions.map { Transaction.Income(it) })
             .sortedByDescending { transaction ->
@@ -189,13 +248,13 @@ fun HomeScreen(
                     is Transaction.Expanse -> {
                         ItemLayout(
                             text = transactions.transactionItem.text,
-                             amount = "- ${transactions.transactionItem.amount}",
+                            amount = "- ${transactions.transactionItem.amount}",
                             date = transactions.transactionItem.date
                         )
                     }
 
                     is Transaction.Income -> {
-                        val t=TransactionItem(
+                        val t = TransactionItem(
                             text = transactions.incomeItem.text,
                             amount = transactions.incomeItem.amount,
                             date = transactions.incomeItem.date
@@ -203,7 +262,7 @@ fun HomeScreen(
                         ItemLayout(
                             text = " ${t.text}",
                             amount = "+ ${t.amount}",
-                            date =t.date
+                            date = t.date
                         )
                     }
                 }
@@ -213,6 +272,9 @@ fun HomeScreen(
         }
 
     }
+
+
+
 }
 
 sealed class Transaction {

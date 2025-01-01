@@ -50,6 +50,10 @@ import com.example.expansetracker.screens.addexpanse.AddExpanseViewmodel
 import com.example.expansetracker.screens.income.AddIncomeViewmodel
 import com.example.expansetracker.util.DeleteAlertDialog
 import com.example.expansetracker.util.dateFormatter
+import com.example.expansetracker.util.getGreeting
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,6 +79,8 @@ fun HomeScreen(
     )
     var amount by remember { mutableStateOf("") }
 
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,15 +95,20 @@ fun HomeScreen(
         ) {
             Column {
                 Text(
-                    text = "Good Morning ",
+                    text = getGreeting(),
                     fontSize = 34.sp,
                     fontFamily = FontFamily.SansSerif,
                     modifier = Modifier.padding(start = 20.dp)
 
                 )
                 Spacer(Modifier.height(10.dp))
+                var currentUser=Firebase.auth.currentUser?.email.toString().split("@").first()
+                currentUser=currentUser.first().uppercase()+currentUser.substring(1)
+
+
+
                 Text(
-                    text = "Rezaul",
+                    text =currentUser,
                     fontSize = 24.sp,
                     fontFamily = FontFamily.SansSerif,
                     modifier = Modifier.padding(start = 20.dp)

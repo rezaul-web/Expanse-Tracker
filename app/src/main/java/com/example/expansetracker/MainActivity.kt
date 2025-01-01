@@ -1,58 +1,55 @@
 package com.example.expansetracker
 
-import android.graphics.drawable.Icon
-import android.graphics.drawable.VectorDrawable
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.expansetracker.screens.income.AddIncomeScreen
+import com.example.expansetracker.authentication.signUp.AuthScreen
 import com.example.expansetracker.screens.AllTransactions
 import com.example.expansetracker.screens.addexpanse.AddExpanseScreen
 import com.example.expansetracker.screens.graph.ExpanseGraph
 import com.example.expansetracker.screens.home.HomeScreen
 import com.example.expansetracker.screens.home.MinimalDropFloating
+import com.example.expansetracker.screens.income.AddIncomeScreen
 import com.example.expansetracker.ui.theme.ExpanseTrackerTheme
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
+
+            val auth = Firebase.auth
+            val currentUser=auth.currentUser
+            val startDestination= if (currentUser==null) "auth_screen" else "home"
             ExpanseTrackerTheme {
                 val navController = rememberNavController()
+
 
 
                 Scaffold(modifier = Modifier.fillMaxSize(),
@@ -109,7 +106,7 @@ class MainActivity : ComponentActivity() {
 
                     }
                 ) { innerPadding ->
-                    NavHost(navController = navController, startDestination = "home") {
+                    NavHost(navController = navController, startDestination =startDestination) {
                         composable(route = "home") {
                             HomeScreen(
                                 modifier = Modifier.padding(innerPadding),
@@ -137,35 +134,15 @@ class MainActivity : ComponentActivity() {
                         composable(route = "expanse_graph") {
                             ExpanseGraph()
                         }
+                      composable(route = "auth_screen") {
+                          AuthScreen(navController = navController)
+                      }
                     }
                 }
             }
         }
     }
 }
-
-data class BottomBarItem(val name: String, val icon: ImageVector)
-
-//@Composable
-////fun BottomAppBar(
-//    modifier: Modifier = Modifier,
-//    items: List<BottomBarItem>, // Pass the list of items to display
-//    onItemClick: (BottomBarItem) -> Unit
-//) {
-//    Row(
-//        modifier = modifier
-//            .fillMaxWidth() // Fill the width
-//            .background(Color.Cyan), // Padding on both sides for spacing
-//        horizontalArrangement = Arrangement.SpaceEvenly, // Distribute the items evenly
-//        verticalAlignment = Alignment.CenterVertically // Vertically center the items
-//    ) {
-//        items.forEach { item ->
-//            IconButton(onClick = { onItemClick(item) }) {
-//                Icon(item.icon, contentDescription = item.name,modifier.size(80.dp))
-//            }
-//        }
-//    }
-//}
 
 
 

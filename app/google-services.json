@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1038564265754",
-    "project_id": "expanse-tracker-50a9a",
-    "storage_bucket": "expanse-tracker-50a9a.firebasestorage.app"
+    "project_number": "488136822821",
+    "project_id": "expanse-tracker-new",
+    "storage_bucket": "expanse-tracker-new.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1038564265754:android:c8f1659ee8b1dfd7b1e6a3",
+        "mobilesdk_app_id": "1:488136822821:android:11fb7bd80eb513a1b56fcc",
         "android_client_info": {
           "package_name": "com.example.expansetracker"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCWCcJ7y1IHtLK1HqHeXnHj7vmWTInOuhc"
+          "current_key": "AIzaSyAcYsC1xukCd-2aRnyhRkXL0T13AgvLvR8"
         }
       ],
       "services": {

@@ -24,16 +24,10 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.example.expansetracker" />
-                  <option name="mobileSdkAppId" value="1:1038564265754:android:c8f1659ee8b1dfd7b1e6a3" />
-                  <option name="projectId" value="expanse-tracker-50a9a" />
-                  <option name="projectNumber" value="1038564265754" />
+                  <option name="mobileSdkAppId" value="1:488136822821:android:11fb7bd80eb513a1b56fcc" />
+                  <option name="projectId" value="expanse-tracker-new" />
+                  <option name="projectNumber" value="488136822821" />
                 </ConnectionSetting>
-              </option>
-              <option name="failureTypes">
-                <list>
-                  <option value="ANR" />
-                  <option value="NON_FATAL" />
-                </list>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
               <option name="timeIntervalDays" value="THIRTY_DAYS" />

@@ -18,7 +18,7 @@ The **Expense Tracker App** is a simple yet powerful financial management applic
 - **Dependency Injection**: Hilt
 
 ## 📸 Screenshots
-|------------|------------![Screenshot_2025-04-03-17-54-32-215_com example myexpansestracker](https://github.com/user-attachments/assets/7873e81c-898a-4996-a511-3af7f1edc6f6)
+![Screenshot_2025-04-03-17-54-39-085_com example myexpansestracker](https://github.com/user-attachments/assets/35c859ea-d5c1-458b-85c7-4aea10311474)
 |-------------![Screenshot_2025-04-03-17-54-43-894_com example myexpansestracker](https://github.com/user-attachments/assets/898fd407-47ad-4fad-9885-9b904a8d8caf)
 -|![Screenshot_2025-04-03-17-54-24-011_com example myexpansestracker](https://github.com/user-attachments/assets/98ef8b2a-4111-4704-883d-1a3907629612)
 

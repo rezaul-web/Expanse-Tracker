@@ -52,7 +52,7 @@ This project is licensed under the **MIT License**.
 ## 📬 Contact
 For queries or collaborations, reach out:
 - **GitHub**: [rezaul-web](https://github.com/rezaul-web)
-- **Email**: [Your Email Here]
+- **Email**: rmdrezaul75@gmail.com
 
 ---
 🚀 *Happy Tracking!* 🎯
